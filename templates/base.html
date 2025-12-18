@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FlashCard App{% endblock %}</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            text-align: center;
+            padding: 30px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .form-container form div {
+            margin: 15px 0;
+        }
+        .form-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-container input[type="text"],
+        .form-container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .form-container input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #2ebb35;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .form-container input[type="submit"]:hover {
+            background-color: #25ac30;
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% block content %}
+    {% endblock %}
+    
+</body>
+</html>
