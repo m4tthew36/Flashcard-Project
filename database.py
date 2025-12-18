@@ -68,6 +68,14 @@ class DatabaseHandler:
             user = cursor.fetchone()
             return user
 
- 
+    def authoriseuser(self, username, password_hash):
+        try:
+            with self.connect() as conn:
+                cursor = conn.execute("SELECT * FROM users WHERE username = ? AND Password_hash = ?;", (username, password_hash))
+                userdetails = cursor.fetchone()
+                print(userdetails)
+                return True
 
-
+        except:
+            return False
+            

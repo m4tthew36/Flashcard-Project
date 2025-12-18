@@ -16,6 +16,19 @@ def signup():
 def dashboard():
     return render_template("dashboard.html")
 
+@app.route("/auth/authoriseuser", methods = ["POST"])
+def authorize_user():
+    formDetials = request.form
+    username = formDetials.get("username")
+    password = formDetials.get("password")
+
+    db1 = DatabaseHandler()
+    Success = db1.getUser(username, password)
+    if Success:
+        return redirect(url_for("dashboard"))
+    
+    return "failed to authorise user..."
+
 @app.route("/auth/createuser", methods = ["POST"])
 def create_user():  
     formDetials = request.form
