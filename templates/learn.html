@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Learn - FlashCard App
+{% endblock %}
+
+{% block content %}
+    <div class="form-container">
+        <h1>Learn</h1>
+        {% if decks %}
+            <p>Select a deck to begin:</p>
+            <ul>
+            {% for d in decks %}
+                <li>{{ d[1] }} - <a href="{{ url_for('learn_deck', deck_id=d[0]) }}">Start</a></li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No decks available.</p>
+        {% endif %}
+        <p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+    </div>
+{% endblock %}

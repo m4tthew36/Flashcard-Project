@@ -14,8 +14,8 @@ class DatabaseHandler:
         with self.connect() as conn:
             conn.execute("""CREATE TABLE IF NOT EXISTS users (
                             user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            username cahr(16) NOT NULL UNIQUE,
-                            Password_hash CHAR(64) NOT NULL ,
+                            username CHAR(16) NOT NULL UNIQUE,
+                            Password_hash CHAR(64) NOT NULL,
                             UserType BOOLEAN NOT NULL
                             );""")
         
@@ -34,9 +34,9 @@ class DatabaseHandler:
                             Deck_id INTEGER,
                             answer CHAR(255) NOT NULL,
                             question CHAR(255) NOT NULL,
-                            FOREIGN KEY (user_id) REFERENCES users(user_id)
-                            FOREIGN KEY (Deck_id) REFERENCES decks(Deck_id))
-                            ;""")
+                            FOREIGN KEY (user_id) REFERENCES users(user_id),
+                            FOREIGN KEY (Deck_id) REFERENCES decks(Deck_id)
+                            );""")
             
     def createTable_Decks(self):
         with self.connect() as conn:
@@ -78,4 +78,44 @@ class DatabaseHandler:
 
         except:
             return False
+    
+    def get_decks(self, user_id=None):
+        with self.connect() as conn:
+            if user_id:
+                cursor = conn.execute("SELECT * FROM decks WHERE user_id = ?;", (user_id,))
+            else:
+                cursor = conn.execute("SELECT * FROM decks;")
+            return cursor.fetchall()
+
+    def get_deck(self, deck_id):
+        with self.connect() as conn:
+            cursor = conn.execute("SELECT * FROM decks WHERE Deck_id = ?;", (deck_id,))
+            return cursor.fetchone()
+
+    def create_deck(self, deck_name, subject, user_id=None):
+        with self.connect() as conn:
+            cursor = conn.execute("INSERT INTO decks (Deck_name, subject, user_id) VALUES (?, ?, ?);", (deck_name, subject, user_id))
+            conn.commit()
+            return cursor.lastrowid
+
+    def get_flashcards(self, deck_id):
+        with self.connect() as conn:
+            cursor = conn.execute("SELECT * FROM flashcards WHERE Deck_id = ?;", (deck_id,))
+            return cursor.fetchall()
+
+    def add_flashcard(self, deck_id, question, answer, user_id=None):
+        with self.connect() as conn:
+            cursor = conn.execute("INSERT INTO flashcards (user_id, Deck_id, answer, question) VALUES (?, ?, ?, ?);", (user_id, deck_id, answer, question))
+            conn.commit()
+            return cursor.lastrowid
+
+    def update_flashcard(self, flashcard_id, question, answer):
+        with self.connect() as conn:
+            conn.execute("UPDATE flashcards SET question = ?, answer = ? WHERE Flashcard_id = ?;", (question, answer, flashcard_id))
+            conn.commit()
+
+    def delete_flashcard(self, flashcard_id):
+        with self.connect() as conn:
+            conn.execute("DELETE FROM flashcards WHERE Flashcard_id = ?;", (flashcard_id,))
+            conn.commit()
             

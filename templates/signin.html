@@ -11,21 +11,21 @@
 
         <form action = "/auth/authoriseuser" method="POST">
             <div>
-                <label for="username">Username:</label>
-                <input name="username" id="username" type="text" required minlength="3" maxlength="20" />
+                <label for="username">Username:</label> <!-- shows the user this is the username field -->
+                <input name="username" id="username" type="text" required minlength="3" maxlength="20" /> <!--input field for usernsme with validation-->
             </div>
 
             <div>
-                <label for="password">Password:</label>
-                <input name="password" id="password" type="password" required minlength="8" />
+                <label for="password">Password:</label> <!-- #shows the user this is the password field -->
+                <input name="password" id="password" type="password" required minlength="8" /> <!-- input field for password with validation -->
             </div>
 
             <div>
-                <input type="submit" value="Sign In" />
+                <input type="submit" value="Sign In" /> <!-- submit button to sign in -->
             </div>
         </form>
         <br/>
-        <p>Dont have an account? <a href = "/signup">click here to sign up</a></p>
+        <p>Dont have an account? <a href = "/signup">click here to sign up</a></p> <!-- link to signup page -->
     </div>
 {% endblock %}
 

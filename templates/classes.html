@@ -1,0 +1,38 @@
+{% extends "base.html" %} <!--inheriting from the base.html template made earlier -->
+
+{% block title %}
+    Classes - FlashCard App
+{% endblock %}
+
+{% block content %}
+    <div class="form-container">
+        <h1>Decks</h1>
+        <h3>Your Decks</h3>
+        {% if decks %}
+            <ul>
+            {% for d in decks %}
+                <li>{{ d[1] }} ({{ d[2] }})</li> <!-- #d[1] is name and d[2] is subject -->
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No decks yet.</p> #for if the account has no decks stored 
+        {% endif %}
+
+        <h3>Create Deck</h3> #creating the deck form 
+        <form method="post" action="{{ url_for('create_class') }}">
+            <div>
+                <label>Name</label>
+                <input name="name" type="text" required />
+            </div>
+            <div>
+                <label>Subject</label>
+                <input name="subject" type="text" /> <!-- obtional subject field for students -->
+            </div>
+            <div>
+                <input type="submit" value="Create Deck" /> #sends the data to the server
+            </div>
+        </form>
+
+        <p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p> <!-- sends back to the dashboard -->
+    </div>
+{% endblock %}

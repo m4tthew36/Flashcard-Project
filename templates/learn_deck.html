@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Learning
+{% endblock %}
+
+{% block content %}
+    <div class="form-container">
+        <h2>Card {{ index+1 }} / {{ total }}</h2>
+        <p><strong>Q:</strong> {{ card[4] }}</p>
+        <details>
+            <summary>Show answer</summary>
+            <p><strong>A:</strong> {{ card[3] }}</p>
+        </details>
+        <p>
+            <a href="{{ url_for('learn_deck', deck_id=deck_id, i=index+1) }}">Next</a>
+        </p>
+        <p><a href="{{ url_for('learn') }}">Back to decks</a></p>
+    </div>
+{% endblock %}
