@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block content %}
-    <div class="form-container">
-        <h1>Edit: {{ deck[1] if deck }}</h1>
+    <div class="form-container"> 
+        <h1>Edit: {{ deck[1] if deck }}</h1> <!-- shows the name of the deck being edited -->
         <h3>Cards</h3>
         {% if cards %}
             <ul>
@@ -14,7 +14,7 @@
                 <li>
                     <strong>Q:</strong> {{ c[4] }} <br>
                     <strong>A:</strong> {{ c[3] }} <br>
-                    <form method="post" action="{{ url_for('delete_card', deck_id=deck[0], card_id=c[0]) }}" style="display:inline">
+                    <form method="post" action="{{ url_for('delete_card', deck_id=deck[0], card_id=c[0]) }}" style="display:inline"> <!-- form to delete a specific card from the deck -->
                         <button type="submit">Delete</button>
                     </form>
                 </li>
@@ -27,7 +27,7 @@
         <h3>Add Card</h3>
         <form method="post">
             <div>
-                <label>Question</label>
+                <label>Question</label> <!-- input field for the question of the flashcard -->
                 <input name="question" type="text" required />
             </div>
             <div>
@@ -39,6 +39,6 @@
             </div>
         </form>
 
-        <p><a href="{{ url_for('edit_cards') }}">Back to decks</a></p>
+        <p><a href="{{ url_for('edit_cards') }}">Back to decks</a></p> <!-- link to send the user back to the edit cards page -->
     </div>
 {% endblock %}

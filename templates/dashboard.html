@@ -5,13 +5,13 @@
 {% endblock %}
 
 {% block content %}
-    <div class="form-container">
-        <h1>DASHBOARD</h1>
-        <p>Choose an action:</p>
+    <div class="form-container"> 
+        <h1>DASHBOARD</h1> 
+        <p>Choose an action:</p> <!-- buttons to navigate to different pages for the user -->
         <p>
-            <a href="{{ url_for('learn') }}"><button style="padding:10px 16px;margin:6px;">Learn</button></a>
-            <a href="{{ url_for('edit_cards') }}"><button style="padding:10px 16px;margin:6px;">Edit Cards</button></a>
-            <a href="{{ url_for('classes') }}"><button style="padding:10px 16px;margin:6px;">Classes</button></a>
+            <a href="{{ url_for('learn') }}"><button style="padding:10px 16px;margin:6px;">Learn</button></a> <!-- learn flashcards -->
+            <a href="{{ url_for('edit_cards') }}"><button style="padding:10px 16px;margin:6px;">Edit Cards</button></a> <!-- edit flashcards -->
+            <a href="{{ url_for('classes') }}"><button style="padding:10px 16px;margin:6px;">Decks</button></a> <!-- view classes -->
         </p>
     </div>
 {% endblock %}

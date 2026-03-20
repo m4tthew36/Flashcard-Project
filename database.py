@@ -14,16 +14,16 @@ class DatabaseHandler:
         with self.connect() as conn:
             conn.execute("""CREATE TABLE IF NOT EXISTS users (
                             user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            username CHAR(16) NOT NULL UNIQUE,
+                            username CHAR(16) NOT NULL UNIQUE, 
                             Password_hash CHAR(64) NOT NULL,
                             UserType BOOLEAN NOT NULL
-                            );""")
+                            );""") #creates the user table with specific constraints for fields to fit the websites needs 
         
 
     def createUser(self, username, password_hash, userType):
         with self.connect() as conn:
             conn.execute("INSERT INTO users (username, Password_hash, UserType) VALUES (?, ?, ?);",(username, password_hash, userType))
-            conn.commit()
+            conn.commit() #inserts a new user into the user table 
             
         
     def createTable_Flashcards(self):

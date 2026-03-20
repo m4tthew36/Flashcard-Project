@@ -29,7 +29,7 @@ def learn():
 
 @app.route("/edit-cards") #edit cards page
 def edit_cards():
-    dbh = DatabaseHandler()
+    dbh = DatabaseHandler() #
     decks = dbh.get_decks(user_id=1) # placeholder user id
     return render_template("edit_cards.html", decks=decks) #returns the edit cards page with the decks available to edit for this user
 
@@ -101,16 +101,16 @@ def learn_deck(deck_id):
     cards = dbh.get_flashcards(deck_id) #retrieve the decks available for a user 
     # simple index-based navigation
     try:
-        index = int(request.args.get('i', 0)) 
-    except ValueError:
+        index = int(request.args.get('i', 0)) #try to retrieve the index from the query parameters, default to 0 if invalid
+    except ValueError: 
         index = 0
     if not cards:
-        return "No cards in this deck." #validation if there are no cards inside of the deck return feedbac to user 
+        return "No cards in this deck." #validation if there are no cards inside of the deck return feedback to user 
     card = cards[index % len(cards)]
     return render_template('learn_deck.html', card=card, deck_id=deck_id, index=index, total=len(cards))
 
 
-@app.route('/edit-cards/<int:deck_id>', methods=['GET', 'POST'])
+@app.route('/edit-cards/<int:deck_id>', methods=['GET', 'POST']) #edit cards for a specific deck
 def manage_deck(deck_id):
     dbh = DatabaseHandler()
     if request.method == 'POST':
@@ -124,20 +124,20 @@ def manage_deck(deck_id):
     return render_template('edit_deck.html', cards=cards, deck=deck)
 
 
-@app.route('/edit-cards/<int:deck_id>/delete/<int:card_id>', methods=['POST'])
-def delete_card(deck_id, card_id):
+@app.route('/edit-cards/<int:deck_id>/delete/<int:card_id>', methods=['POST']) #delete a specific card from a specific deck
+def delete_card(deck_id, card_id): 
     dbh = DatabaseHandler()
     dbh.delete_flashcard(card_id)
     return redirect(url_for('manage_deck', deck_id=deck_id))
 
 
-@app.route('/classes/create', methods=['POST'])
+@app.route('/classes/create', methods=['POST']) #create a new class (deck) for the user
 def create_class():
     dbh = DatabaseHandler()
-    name = request.form.get('name')
-    subject = request.form.get('subject')
-    dbh.create_deck(name, subject, user_id=1)
-    return redirect(url_for('classes'))
+    name = request.form.get('name') #retrieve the name of the deck from the form
+    subject = request.form.get('subject') #retrieve the subject of the deck from the form
+    dbh.create_deck(name, subject, user_id=1) 
+    return redirect(url_for('classes'))   
 
 
 db = DatabaseHandler()

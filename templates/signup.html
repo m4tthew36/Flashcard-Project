@@ -8,28 +8,28 @@
     <div class="form-container">
         <h1>Flashcard App</h1>
         <h2>Sign Up</h2>
-        <form action = "/auth/createuser" method="POST">
+        <form action = "/auth/createuser" method="POST"> <!-- form to create a new user -->
             <div>
                 <label for="username">Username:</label> 
-                <input name="username" id="username" type="text" required minlength="3" maxlength="20"  />
+                <input name="username" id="username" type="text" required minlength="3" maxlength="20"  /> <!-- input field for username with validation -->
             </div>
 
             <div>
                 <label for="password">Password:</label>
-                <input name="password" id="password" type="password" required minlength="8"/>
+                <input name="password" id="password" type="password" required minlength="8"/> <!-- input field for password with validation -->
             </div>
             <div>
-                <label for="repassword">Re-enter Password:</label>
-                <input name="repassword" id="repassword" type="password" required minlength="3"/>
+                <label for="repassword">Re-enter Password:</label> 
+                <input name="repassword" id="repassword" type="password" required minlength="3"/> <!-- input field to confirm password with validation -->
             </div>
             <div>
-                <label for="teacher">are you a teacher? <input name="teacher" id="teacher" type="checkbox"/> </label> 
+                <label for="teacher">are you a teacher? <input name="teacher" id="teacher" type="checkbox"/> </label>  <!-- checkbox for if the user is a teacher or not -->
             </div>
             <div>
-                <input type="submit" value="Sign Up" />
+                <input type="submit" value="Sign Up" /> <!-- submit button to create the account -->
             </div>
         </form>
         <br/>
-        <p>already have an account? <a href = "/" >click here to sign in</a></p>
-    </div>
+        <p>already have an account? <a href = "/" >click here to sign in</a></p> <!-- link to the signin page -->
+    </div>  
 {% endblock %}

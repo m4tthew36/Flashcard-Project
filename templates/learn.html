@@ -5,18 +5,18 @@
 {% endblock %}
 
 {% block content %}
-    <div class="form-container">
-        <h1>Learn</h1>
+    <div class="form-container"> 
+        <h1>Learn</h1> 
         {% if decks %}
             <p>Select a deck to begin:</p>
             <ul>
             {% for d in decks %}
-                <li>{{ d[1] }} - <a href="{{ url_for('learn_deck', deck_id=d[0]) }}">Start</a></li>
+                <li>{{ d[1] }} - <a href="{{ url_for('learn_deck', deck_id=d[0]) }}">Start</a></li> <!-- d[1] is the name of the deck and d[0] is the id of the deck -->
             {% endfor %}
             </ul>
         {% else %}
             <p>No decks available.</p>
         {% endif %}
-        <p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+        <p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p> <!-- link to send the user back to the dashboard -->
     </div>
 {% endblock %}
