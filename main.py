@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for
 from database.database_handler import DatabaseHandler
 from database.database_exceptions import nonUniqueUsername
-from flask_login import LoginManager, login_user, login_required, current_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from models.user_models import UserType
 
 
 app = Flask(__name__) 
@@ -15,7 +16,10 @@ lm.login_view =  "signin"
 def load_user(user_id):
 # method of checking logged in user by id 
     dbh = DatabaseHandler() 
-    return dbh.getUserById(user_id)    
+    return dbh.getUserById(user_id)   
+
+
+ 
 
 
 @app.route("/") #redirect for dashboard for logged in 
@@ -28,6 +32,12 @@ def signin():
     return render_template("signin.html") #returns the signin page 
 
 
+@app.route("/signout") #signout page
+@login_required
+def signout():
+    logout_user() #logout user using flask login
+    return redirect(url_for("signin")) #redirect to signin page after signing out
+
 @app.route("/signup") #signup page
 def signup():
     return render_template("signup.html") #returns the signup page 
@@ -36,6 +46,18 @@ def signup():
 @app.route("/dashboard") #dashboard page
 @login_required
 def dashboard():
+    #check the current user type from the user stored by flask login 
+    if current_user.usertype == UserType.STUDENT.value:
+        # for student
+        print("im a student ")
+        pass
+    elif current_user.usertype == UserType.TEACHER.value:
+        # for teacher 
+        print("im a teacher ")
+        pass
+    else:
+        redirect(url_for("signout"))
+        pass
     return render_template("dashboard.html") # returns the dashboard page 
 
 
@@ -65,18 +87,7 @@ def classes():
     decks = dbh.get_decks(user_id=1)
     return render_template("classes.html", decks=decks) #returns the classes page with the users not with usertype of teacher 
 
-@app.route("/auth/authoriseuser", methods = ["POST"]) #authorise user
-def authorize_user():
-    formDetials = request.form #retrieve details from submitted form by the user 
-    username = formDetials.get("username") #retrieved username
-    password = formDetials.get("password") #retrievced password 
 
-    db1 = DatabaseHandler()
-    Success = db1.getUser(username, password)  #retreve users username and password 
-    if Success: #check for success
-        return redirect(url_for("dashboard")) #returns redirect for succesfull loging/
-    
-    return "failed to authorise user..." # user feedback message returned if authorize_user is False
 
 
 @app.route("/auth/createuser", methods = ["POST"])
@@ -86,11 +97,15 @@ def create_user():  #used for creating a user
     password = formDetials.get("password") #retreived password 
     repassword = formDetials.get("repassword") #retreived repassword 
     teacher = formDetials.get("teacher") == "on" #retreived usertype for teacher or student settings 
+    if teacher:
+        usertype = UserType.TEACHER #set usertype to teacher if teacher box is checked
+    else:
+        usertype = UserType.STUDENT #set usertype to student if teacher box is not checked
 
     if len(username) > 5 and len(password) > 7 and len(repassword) > 7 and password == repassword: #validation for username and password 
         db = DatabaseHandler()
         try:
-            db.createUser(username, password, teacher) #db function to create the user paramters are values for each field
+            db.createUser(username, password, usertype.value) #db function to create the user paramters are values for each field
         except nonUniqueUsername:
             return "Username already exists." # user feedback message returned if the username is not unique
         except Exception as e: 
@@ -118,11 +133,23 @@ def signin_user():
 
     db1 = DatabaseHandler()
     user = db1.getUser(username, password)
+    print(user.username)
+    print(user.usertype)
     if user:
         login_user(user) #login user using flask login
         return redirect(url_for("dashboard"))
     
     return "failed to signin..."
+
+
+@app.route("/auth/signout") #signout user
+@login_required
+def signout_user():
+    logout_user() #logout user using flask login
+    return redirect(url_for("signin")) #redirect to signin page after signing out
+
+
+
 
 
 @app.route('/learn/<int:deck_id>')

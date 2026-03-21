@@ -21,7 +21,7 @@ class DatabaseHandler:
                             user_id INTEGER PRIMARY KEY AUTOINCREMENT,
                             username CHAR(16) NOT NULL UNIQUE, 
                             Password_hash CHAR(64) NOT NULL,
-                            UserType BOOLEAN NOT NULL
+                            UserType STRING NOT NULL
                             );""") #creates the user table with specific constraints for fields to fit the websites needs 
         
 
@@ -81,7 +81,7 @@ class DatabaseHandler:
             # fetch one row from the result set; if a user is found, this will contain their details; if not, it will be None
             row = cursor.fetchone()
             # if a user is found with the provided username and password hash, return a User object; otherwise, return None
-            return User(row["user_id"], row["username"], row["Password_hash"], row["UserType"]) if row else None 
+            return User(row[0], row[1], row[2], row[3]) if row else None 
         
 
     def getUserById(self, user_id):
@@ -91,7 +91,7 @@ class DatabaseHandler:
             # fetch one row from the result set; if a user is found, this will contain their details; if not, it will be None
             row = cursor.fetchone()
             # if a user is found with the provided user_id, return a User object; otherwise, return None
-            return User(row["user_id"], row["username"], row["Password_hash"], row["UserType"]) if row else None
+            return User(row[0], row[1], row[2], row[3]) if row else None
 
     def authoriseuser(self, username, password_hash):
         try:
@@ -144,8 +144,19 @@ class DatabaseHandler:
             conn.execute("DELETE FROM flashcards WHERE Flashcard_id = ?;", (flashcard_id,))
             conn.commit()
 
+
+#utility functions for managing the database, including creating tables, adding users, retrieving users, and managing flashcards and decks.
+
+
+
     def delete_user(self, username):
         with self.connect() as conn:
             conn.execute("DELETE FROM users WHERE username = ?;", (username,))
             conn.commit()
+            # deletes a user from the user table based on the provided username
             
+    def reset_usertable(self):
+        with self.connect() as conn:
+            conn.execute("DROP TABLE IF EXISTS users;")
+            self.createTable_users()
+            # utility function to reset the user table by dropping it if it exists and then recreating it

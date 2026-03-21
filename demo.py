@@ -2,4 +2,4 @@ from database.database_handler import DatabaseHandler
 
 dbh = DatabaseHandler()
 
-dbh.delete_user("students123")
+dbh.reset_usertable()
