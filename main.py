@@ -81,8 +81,6 @@ def create_user():  #used for creating a user
     elif password != repassword:
         return "passwords and repassword do not match"  # user feedback based upon invalid form received 
     
-    
-# Loads of changes
 
     return "failed to create user..."
 
