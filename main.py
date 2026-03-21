@@ -1,11 +1,30 @@
 from flask import Flask, render_template, request, redirect, url_for
 from database.database_handler import DatabaseHandler
 from database.database_exceptions import nonUniqueUsername
+from flask_login import LoginManager, login_user, login_required, current_user
 
-app = Flask(__name__)
 
-@app.route("/") #signin page
+app = Flask(__name__) 
+# initializes the Flask application and sets up the login manager for handling user authentication and session management.
+app.config["SECRET_KEY"] = "temporary_secret"
+# set up the login manager
+lm = LoginManager(app) 
+# define the route for un logged in users 
+lm.login_view =  "signin"
+@lm.user_loader
+def load_user(user_id):
+# method of checking logged in user by id 
+    dbh = DatabaseHandler() 
+    return dbh.getUserById(user_id)    
+
+
+@app.route("/") #redirect for dashboard for logged in 
 def home():
+    return redirect(url_for("dashboard"))
+
+
+@app.route("/signin") #signin page
+def signin():
     return render_template("signin.html") #returns the signin page 
 
 
@@ -15,11 +34,13 @@ def signup():
 
 
 @app.route("/dashboard") #dashboard page
+@login_required
 def dashboard():
     return render_template("dashboard.html") # returns the dashboard page 
 
 
 @app.route("/learn") #learn page
+@login_required
 def learn():
     # list available decks to learn from
     dbh = DatabaseHandler()
@@ -29,6 +50,7 @@ def learn():
 
 
 @app.route("/edit-cards") #edit cards page
+@login_required
 def edit_cards():
     dbh = DatabaseHandler() #
     decks = dbh.get_decks(user_id=1) # placeholder user id
@@ -36,6 +58,8 @@ def edit_cards():
 
 
 @app.route("/classes") #classes page
+@login_required
+
 def classes():
     dbh = DatabaseHandler()
     decks = dbh.get_decks(user_id=1)
@@ -95,12 +119,14 @@ def signin_user():
     db1 = DatabaseHandler()
     user = db1.getUser(username, password)
     if user:
+        login_user(user) #login user using flask login
         return redirect(url_for("dashboard"))
     
     return "failed to signin..."
 
 
 @app.route('/learn/<int:deck_id>')
+@login_required
 def learn_deck(deck_id):
     dbh = DatabaseHandler()
     cards = dbh.get_flashcards(deck_id) #retrieve the decks available for a user 

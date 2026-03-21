@@ -1,5 +1,6 @@
 import sqlite3 as sql
 from database.database_exceptions import nonUniqueUsername
+from models.user_models import User
 
 
 
@@ -73,11 +74,24 @@ class DatabaseHandler:
                             );""")
     
 
-    def getUser(self, username, password_hash):
+    def getUser(self, username, password_hash):  
         with self.connect() as conn:
+            # execute a query to find a user with the provided username and password hash; this is used for authentication during signin
             cursor = conn.execute("SELECT * FROM users WHERE username = ? AND Password_hash = ?;", (username, password_hash))
-            user = cursor.fetchone()
-            return user
+            # fetch one row from the result set; if a user is found, this will contain their details; if not, it will be None
+            row = cursor.fetchone()
+            # if a user is found with the provided username and password hash, return a User object; otherwise, return None
+            return User(row["user_id"], row["username"], row["Password_hash"], row["UserType"]) if row else None 
+        
+
+    def getUserById(self, user_id):
+        with self.connect() as conn:
+            # execute a query to find a user with the provided user_id; this is used for authentication during signin
+            cursor = conn.execute("SELECT * FROM users WHERE user_id = ?;", (user_id,))
+            # fetch one row from the result set; if a user is found, this will contain their details; if not, it will be None
+            row = cursor.fetchone()
+            # if a user is found with the provided user_id, return a User object; otherwise, return None
+            return User(row["user_id"], row["username"], row["Password_hash"], row["UserType"]) if row else None
 
     def authoriseuser(self, username, password_hash):
         try:
