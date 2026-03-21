@@ -1,0 +1,2 @@
+class nonUniqueUsername(Exception):
+    pass

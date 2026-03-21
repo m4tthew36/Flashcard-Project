@@ -1,4 +1,6 @@
 import sqlite3 as sql
+from database.database_exceptions import nonUniqueUsername
+
 
 
 class DatabaseHandler:
@@ -7,6 +9,8 @@ class DatabaseHandler:
 
     def connect(self):
         return sql.connect(self.dbName)
+
+        
     
 
 
@@ -22,7 +26,14 @@ class DatabaseHandler:
 
     def createUser(self, username, password_hash, userType):
         with self.connect() as conn:
-            conn.execute("INSERT INTO users (username, Password_hash, UserType) VALUES (?, ?, ?);",(username, password_hash, userType))
+            try:  
+                # This could throw IntegrityError if the username already exists due to the UNIQUE constraint
+                conn.execute("INSERT INTO users (username, Password_hash, UserType) VALUES (?, ?, ?);",(username, password_hash, userType))
+                # raise Exception("Simulated database error")  # Simulate a database error for testing purposes
+            except sql.IntegrityError as e:
+                # if username is not unique, raise a custom exception to be handled by the calling code
+                raise nonUniqueUsername()
+            
             conn.commit() #inserts a new user into the user table 
             
         
@@ -117,5 +128,10 @@ class DatabaseHandler:
     def delete_flashcard(self, flashcard_id):
         with self.connect() as conn:
             conn.execute("DELETE FROM flashcards WHERE Flashcard_id = ?;", (flashcard_id,))
+            conn.commit()
+
+    def delete_user(self, username):
+        with self.connect() as conn:
+            conn.execute("DELETE FROM users WHERE username = ?;", (username,))
             conn.commit()
             

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
-from database import DatabaseHandler
+from database.database_handler import DatabaseHandler
+from database.database_exceptions import nonUniqueUsername
 
 app = Flask(__name__)
 
@@ -63,10 +64,16 @@ def create_user():  #used for creating a user
     teacher = formDetials.get("teacher") == "on" #retreived usertype for teacher or student settings 
 
     if len(username) > 5 and len(password) > 7 and len(repassword) > 7 and password == repassword: #validation for username and password 
-       db = DatabaseHandler()
-       success = db.createUser(username, password, teacher) #db function to create the user paramters are values for each field
-       if success: 
-           return redirect(url_for("dashboard")) #return redirect for dashbaord if successfull 
+        db = DatabaseHandler()
+        try:
+            db.createUser(username, password, teacher) #db function to create the user paramters are values for each field
+        except nonUniqueUsername:
+            return "Username already exists." # user feedback message returned if the username is not unique
+        except Exception as e: 
+            print(f"An error occurred: {e}")  
+            return "An error occurred while creating the user." # user feedback message returned if there is an error during user creation
+
+        return redirect(url_for("dashboard")) #return redirect for dashbaord if successfull
     elif len(username) <= 5:
         return "username must be more than 5 characters"
     elif len(password) <= 7:
@@ -81,11 +88,11 @@ def create_user():  #used for creating a user
 
 
 
-@app.route("/auth/signin", methods = ["POST"])
+@app.route("/auth/signin", methods = ["POST"]) #signin user
 def signin_user():  
     formDetials = request.form
-    username = formDetials.get("username")
-    password = formDetials.get("password")
+    username = formDetials.get("username") #retrieve username from form
+    password = formDetials.get("password") #retrieve password from form
 
     db1 = DatabaseHandler()
     user = db1.getUser(username, password)
