@@ -15,10 +15,11 @@
             {% endfor %}
             </ul>
         {% else %}
-            <p>No decks yet.</p> #for if the account has no decks stored 
+            <p>No decks yet.</p> <!-- for if the account has no decks stored -->
         {% endif %}
 
-        <h3>Create Deck</h3> #creating the deck form 
+        <h3>Create Deck</h3> 
+         <!--#creating the deck form  -->
         <form method="post" action="{{ url_for('create_class') }}">
             <div>
                 <label>Name</label>
@@ -29,7 +30,8 @@
                 <input name="subject" type="text" /> <!-- obtional subject field for students -->
             </div>
             <div>
-                <input type="submit" value="Create Deck" /> #sends the data to the server
+                <!-- #sends the data to the server -->
+                <input type="submit" value="Create Deck" /> 
             </div>
         </form>
 

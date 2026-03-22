@@ -179,3 +179,9 @@ class DatabaseHandler:
             conn.execute("DROP TABLE IF EXISTS users;")
             self.createTable_users()
             # utility function to reset the user table by dropping it if it exists and then recreating it
+
+    def delete_deck(self, deck_id):
+        with self.connect() as conn:
+            conn.execute("DELETE FROM decks WHERE Deck_id = ?;", (deck_id,))
+            conn.commit()
+            # deletes a deck from the decks table based on the provided deck_id
