@@ -15,4 +15,11 @@
             <a href="{{ url_for('signout') }}"><button style="padding:10px 16px;margin:6px;">Sign Out</button></a> <!-- sign out -->
         </p>
     </div>
+
+    <!-- redirect for user management in bottom corner -->
+    <div style="position: fixed; bottom: 20px; right: 20px;">
+        <!-- button to take user to management page -->
+        <a href="{{ url_for('management') }}"><button style="padding:10px 16px;">Account Management</button></a>
+    </div>
+
 {% endblock %}

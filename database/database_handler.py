@@ -121,11 +121,15 @@ class DatabaseHandler:
                 cursor = conn.execute("SELECT * FROM decks;")
             return cursor.fetchall()
 
+
+    #function to retrieve a specific deck using its id 
     def get_deck(self, deck_id):
+        #connects to databse and uses sql to fetch the deck with assoicated id 
         with self.connect() as conn:
             cursor = conn.execute("SELECT * FROM decks WHERE Deck_id = ?;", (deck_id,))
             return cursor.fetchone()
 
+    # functions for creating a deck 
     def create_deck(self, deck_name, subject, user_id=None):
         with self.connect() as conn:
             cursor = conn.execute(
@@ -135,15 +139,19 @@ class DatabaseHandler:
             conn.commit()
             return cursor.lastrowid
 
+    #retrieve all flashcards inside a deck using deck_id 
     def get_flashcards(self, deck_id):
+        #connects to database and uses sql to fetch all flashcards with assoicated deck_id
         with self.connect() as conn:
             cursor = conn.execute(
                 "SELECT * FROM flashcards WHERE Deck_id = ?;", (deck_id,)
             )
             return cursor.fetchall()
 
+
     def add_flashcard(self, deck_id, question, answer, user_id=None):
         with self.connect() as conn:
+            #
             cursor = conn.execute(
                 "INSERT INTO flashcards (user_id, Deck_id, answer, question) VALUES (?, ?, ?, ?);",
                 (user_id, deck_id, answer, question),
@@ -159,11 +167,14 @@ class DatabaseHandler:
             )
             conn.commit()
 
+    # functions for deletion of a flashcard - will be used in complete edit cards page 
     def delete_flashcard(self, flashcard_id):
+        # connects to the database and executes a delete statement
         with self.connect() as conn:
             conn.execute(
                 "DELETE FROM flashcards WHERE Flashcard_id = ?;", (flashcard_id,)
             )
+            # commits transaction
             conn.commit()
 
     # utility functions for managing the database, including creating tables, adding users, retrieving users, and managing flashcards and decks.
@@ -185,3 +196,43 @@ class DatabaseHandler:
             conn.execute("DELETE FROM decks WHERE Deck_id = ?;", (deck_id,))
             conn.commit()
             # deletes a deck from the decks table based on the provided deck_id
+
+
+# account management 
+
+    def update_password(self, user_id, current_password, new_password):
+        with self.connect() as conn:
+            # check the current password matches what is stored
+            cursor = conn.execute(
+                "SELECT * FROM users WHERE user_id = ? AND Password_hash = ?;",
+                (user_id, current_password),
+            )
+            row = cursor.fetchone()
+            if not row:
+                return False  # current password is incorrect
+            # update to the new password
+            conn.execute(
+                "UPDATE users SET Password_hash = ? WHERE user_id = ?;",
+                (new_password, user_id),
+            )
+            conn.commit()
+            return True
+
+    def delete_account(self, user_id, password):
+        with self.connect() as conn:
+            # verify the password before deleting
+            cursor = conn.execute(
+                "SELECT * FROM users WHERE user_id = ? AND Password_hash = ?;",
+                (user_id, password),
+            )
+            row = cursor.fetchone()
+            if not row:
+                return False  # password is incorrect
+            # delete all flashcards belonging to the user first due to foreign key constraints
+            conn.execute("DELETE FROM flashcards WHERE user_id = ?;", (user_id,))
+            # delete all decks belonging to the user
+            conn.execute("DELETE FROM decks WHERE user_id = ?;", (user_id,))
+            # delete the user account
+            conn.execute("DELETE FROM users WHERE user_id = ?;", (user_id,))
+            conn.commit()
+            return True

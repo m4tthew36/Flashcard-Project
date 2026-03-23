@@ -145,6 +145,8 @@ def create_user():  # used for creating a user
     return "failed to create user..."
 
 
+
+
 @app.route("/auth/signin", methods=["POST"])  # signin user
 def signin_user():
     formDetials = request.form
@@ -170,21 +172,26 @@ def signout_user():
 
 
 @app.route("/learn/<int:deck_id>")
-@login_required
+# route for learning 
 def learn_deck(deck_id):
     dbh = DatabaseHandler()
-    cards = dbh.get_flashcards(deck_id)  # retrieve the decks available for a user
-    # simple index-based navigation
+    # retreieve all flashcards 
+    cards = dbh.get_flashcards(deck_id)
     try:
-        index = int(
-            request.args.get("i", 0)
-        )  # try to retrieve the index from the query parameters, default to 0 if invalid
+        # retrieve the index of the card to be displayed from the query parameters
+        index = int(request.args.get("i", 0))
     except ValueError:
         index = 0
     if not cards:
-        return "No cards in this deck."  # validation if there are no cards inside of the deck return feedback to user
-    card = cards[index % len(cards)]
+        return "No cards in this deck."
+    
+    # use the modulus of the operator to loop back to start 
+    index = index % len(cards) 
+    # retrieve the card at the current index to be displayed on the learn page
+    card = cards[index]
+    
     return render_template(
+        # return the learn page with deck and correct number of flashcards and current card
         "learn_deck.html", card=card, deck_id=deck_id, index=index, total=len(cards)
     )
 
@@ -204,12 +211,14 @@ def manage_deck(deck_id):
     deck = dbh.get_deck(deck_id)
     return render_template("edit_deck.html", cards=cards, deck=deck)
 
-
-@app.route(
+# route for deleting a specific card from a specific deck
+@app.route( 
     "/edit-cards/<int:deck_id>/delete/<int:card_id>", methods=["POST"]
 )  # delete a specific card from a specific deck
 def delete_card(deck_id, card_id):
+    #connect to database so card can be retrieved and altered 
     dbh = DatabaseHandler()
+    #function to delete the card 
     dbh.delete_flashcard(card_id)
     return redirect(url_for("manage_deck", deck_id=deck_id))
 
@@ -225,6 +234,55 @@ def create_class():
     )  # retrieve the subject of the deck from the form
     dbh.create_deck(name, subject, user_id=1)
     return redirect(url_for("classes"))
+
+
+# account management stuff
+
+@app.route("/management", methods=["GET"])
+# route for account management page 
+@login_required
+def management():
+    # return the webpage
+    return render_template("management.html")
+
+
+@app.route("/auth/reset-password", methods=["POST"])
+@login_required
+# reset password function 
+def reset_password():
+    dbh = DatabaseHandler()
+    current_password = request.form.get("current_password")
+    new_password = request.form.get("new_password")
+    confirm_password = request.form.get("confirm_password")
+
+# comparing the two password and repassword in the form 
+    if new_password != confirm_password:
+        return "passwords do not match"
+    success = dbh.update_password(current_user.id, current_password, new_password)
+    if success:
+        # if the password update is successful return this message to the user
+        return "password updated successfully"
+    else:
+        # if the password update is not successful return this message to the user
+        return "incorrect current password"
+
+
+@app.route("/auth/delete-account", methods=["POST"])
+@login_required
+def delete_account():
+    dbh = DatabaseHandler()
+    # retrieve the password from the form to confirm account deletion
+    password = request.form.get("delete_password")
+
+    success = dbh.delete_account(current_user.id, password)
+    if success:
+        # logout so session ends 
+        logout_user()
+        # sent back to signin page after account deletion
+        return redirect(url_for("signin"))
+    else:
+        # if account deletion is unsuccessful 
+        return "incorrect password"
 
 
 db = DatabaseHandler()

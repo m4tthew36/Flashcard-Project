@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Account Management - FlashCard App
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>Account Management</h1>
+
+    <!-- Reset Password Section -->
+    <div class="section">
+        <h3>Reset Password</h3>
+
+        <!-- Reset Password Form -->
+        <form action="{{ url_for('reset_password') }}" method="POST">
+            <input type="hidden" name="action" value="reset_password">
+            <div>
+                <!-- Current Password Input -->
+                <label for="current_password">Current Password</label>
+                <input type="password" id="current_password" name="current_password" required>
+            </div>
+            <div>
+                <!-- New Password Input -->
+                <label for="new_password">New Password</label>
+                <input type="password" id="new_password" name="new_password" required>
+            </div>
+            <div>#
+                    <!-- Confirm New Password Input -->
+                <label for="confirm_password">Confirm New Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
+            <div>
+                <!-- Update Password Button -->
+                <input type="submit" value="Update Password">
+            </div>
+        </form>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Delete Account Section -->
+    <div class="section">
+        <h3>Delete Account</h3>
+        <!-- different font, draw attention for user  -->
+        <p style="font-size: 14px; color: grey;">This will delete your account.</p>
+
+        <!-- form for deleting account -->
+        <form action="{{ url_for('delete_account') }}" method="POST">
+            <input type="hidden" name="action" value="delete_account">
+            <div>
+                <!-- confirm password field  -->
+                <label for="delete_password">Confirm Password</label>
+                <input type="password" id="delete_password" name="delete_password" required>
+            </div>
+            <div>
+                <!-- button to submit deletion -->
+                <button type="submit" class="danger-btn">Delete Account</button>
+            </div>
+        </form>
+    </div>
+
+
+    <!-- possibility to still return to dashboard -->
+    <p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+    
+</div>
+{% endblock %}
